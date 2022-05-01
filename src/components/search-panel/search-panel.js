@@ -1,17 +1,14 @@
 import React, {useState} from "react";
 
-import './search-panel.css';
-
+import "./search-panel.css";
 
 const SearchPanel = ({changeQuery}) => {
 
-    const [inputVal,setInputVal]=useState('')
-    console.log(inputVal)
-
+    const [inputVal, setInputVal] = useState("");
 
     function handleChange(e) {
-        setInputVal(e.target.value)
-        changeQuery(inputVal)
+        setInputVal(e.target.value);
+        changeQuery(e.target.value);
     }
 
     return (

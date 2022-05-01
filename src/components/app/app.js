@@ -22,9 +22,6 @@ const App = () => {
         createTodoItem("Have a lunch"),
     ]);
 
-    const [searchQuery,setSearchQuery] = useState('')
-
-
     function createTodoItem(text) {
         return {
             id: idGenerator(), label: text, important: false, done: false,
@@ -65,36 +62,53 @@ const App = () => {
         return newArray;
     }
 
-
-
+    const [searchQuery, setSearchQuery] = useState("");
 
     const changeQuery = (text) => {
-        setSearchQuery(prev=>text)
+        setSearchQuery(text);
+    };
+
+    const search = () => {
+        if (searchQuery.length === 0) {
+            return todoData;
+        }
+        return todoData.filter((el) => el.label.toLowerCase()
+                                         .includes(searchQuery.toLowerCase()));
+    };
+
+    const [filter, setFilter] = useState("active");
+
+    function handleFilter(array, text) {
+        switch (text) {
+            case "all":
+                return array;
+            case "active":
+                return array.filter((el) => el.done === false);
+            case "done":
+                return array.filter((el) => el.done === true);
+        }
     }
 
-    const searchFilter = ()=>{
-        if(searchQuery.length===0) {
-            return  todoData
-        }
-        return todoData.filter((el)=>el.label.indexOf(searchQuery))
+    function handleFilterChange(text) {
+        setFilter(text);
     }
 
     const doneCount = todoData.filter((el) => el.done === true).length;
     const todoCount = todoData.filter((el) => el.done === false).length;
-    const visibleItems = searchFilter()
+    const arrayAfterSearch = search();
+    const arrayAfterSearchAndFilter = handleFilter(arrayAfterSearch, filter);
 
-    console.log(searchQuery,visibleItems)
     return (
         <div className="todo-app">
 
             <AppHeader toDo={todoCount} done={doneCount}/>
             <div className="top-panel d-flex">
                 <SearchPanel changeQuery={changeQuery}/>
-                <ItemStatusFilter/>
+                <ItemStatusFilter filter={filter} handleFilterChange={handleFilterChange}/>
             </div>
 
             <TodoList
-                todos={visibleItems}
+                todos={arrayAfterSearchAndFilter}
                 onDeleted={deleteItem}
                 onToggleImportant={onToggleImportant}
                 onToggleDone={onToggleDone}
